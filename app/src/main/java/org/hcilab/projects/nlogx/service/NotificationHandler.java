@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 
 import org.hcilab.projects.nlogx.misc.Const;
 import org.hcilab.projects.nlogx.misc.DatabaseHelper;

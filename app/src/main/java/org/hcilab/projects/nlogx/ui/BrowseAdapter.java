@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,10 +43,12 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> {
 	private Handler handler = new Handler();
 
 	private String lastDate = "";
+	private String type;
 	private boolean shouldLoadMore = true;
 
-	BrowseAdapter(Activity context) {
+	BrowseAdapter(Activity context, String type) {
 		this.context = context;
+		this.type = type;
 		loadMore(Integer.MAX_VALUE);
 	}
 
@@ -74,33 +77,64 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> {
 	@Override
 	public void onBindViewHolder(@NonNull BrowseViewHolder vh, int position) {
 		DataItem item = data.get(position);
+		if(type.equals("wp") && item.packageName.contains("whatsapp"))
+		{
+			if(iconCache.containsKey(item.getPackageName()) && iconCache.get(item.getPackageName()) != null) {
+				vh.icon.setImageDrawable(iconCache.get(item.getPackageName()));
+			} else {
+				vh.icon.setImageResource(R.mipmap.ic_launcher);
+			}
 
-		if(iconCache.containsKey(item.getPackageName()) && iconCache.get(item.getPackageName()) != null) {
-			vh.icon.setImageDrawable(iconCache.get(item.getPackageName()));
-		} else {
-			vh.icon.setImageResource(R.mipmap.ic_launcher);
+			vh.item.setTag("" + item.getId());
+			vh.name.setText(item.getAppName());
+
+			if(item.getPreview().length() == 0) {
+				vh.preview.setVisibility(View.GONE);
+				vh.text.setVisibility(View.VISIBLE);
+				vh.text.setText(item.getText());
+			} else {
+				vh.text.setVisibility(View.GONE);
+				vh.preview.setVisibility(View.VISIBLE);
+				vh.preview.setText(item.getPreview());
+			}
+			Log.d("texts", "onBindViewHolder: "+item.shouldShowDate()+"  "+item.getDate());
+			if(item.shouldShowDate()) {
+				vh.date.setVisibility(View.VISIBLE);
+				vh.date.setText(item.getDate());
+			} else {
+				vh.date.setVisibility(View.GONE);
+			}
+		}else if(type.equals("all"))
+		{
+            if(iconCache.containsKey(item.getPackageName()) && iconCache.get(item.getPackageName()) != null) {
+				vh.icon.setImageDrawable(iconCache.get(item.getPackageName()));
+			} else {
+				vh.icon.setImageResource(R.mipmap.ic_launcher);
+			}
+
+			vh.item.setTag("" + item.getId());
+			vh.name.setText(item.getAppName());
+
+			if(item.getPreview().length() == 0) {
+				vh.preview.setVisibility(View.GONE);
+				vh.text.setVisibility(View.VISIBLE);
+				vh.text.setText(item.getText());
+			} else {
+				vh.text.setVisibility(View.GONE);
+				vh.preview.setVisibility(View.VISIBLE);
+				vh.preview.setText(item.getPreview());
+			}
+
+			if(item.shouldShowDate()) {
+				vh.date.setVisibility(View.VISIBLE);
+				vh.date.setText(item.getDate());
+			} else {
+				vh.date.setVisibility(View.GONE);
+			}
+		}else
+		{
+			vh.item.setVisibility(View.GONE);
 		}
-
-		vh.item.setTag("" + item.getId());
-		vh.name.setText(item.getAppName());
-
-		if(item.getPreview().length() == 0) {
-			vh.preview.setVisibility(View.GONE);
-			vh.text.setVisibility(View.VISIBLE);
-			vh.text.setText(item.getText());
-		} else {
-			vh.text.setVisibility(View.GONE);
-			vh.preview.setVisibility(View.VISIBLE);
-			vh.preview.setText(item.getPreview());
-		}
-
-		if(item.shouldShowDate()) {
-			vh.date.setVisibility(View.VISIBLE);
-			vh.date.setText(item.getDate());
-		} else {
-			vh.date.setVisibility(View.GONE);
-		}
-
 		if(position == getItemCount() - 1) {
 			loadMore(item.getId());
 		}
@@ -142,9 +176,11 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> {
 					String thisDate = dataItem.getDate();
 					if(lastDate.equals(thisDate)) {
 						dataItem.setShowDate(false);
+					}else
+					{
+						dataItem.setShowDate(true);
 					}
 					lastDate = thisDate;
-
 					data.add(dataItem);
 					cursor.moveToNext();
 				}

@@ -2,6 +2,7 @@ package org.hcilab.projects.nlogx.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,7 +26,6 @@ public class BrowseActivity extends AppCompatActivity implements SwipeRefreshLay
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_browse);
-
 		RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
 		recyclerView = findViewById(R.id.list);
 		recyclerView.setLayoutManager(layoutManager);
@@ -63,7 +63,7 @@ public class BrowseActivity extends AppCompatActivity implements SwipeRefreshLay
 	}
 
 	private void update() {
-		BrowseAdapter adapter = new BrowseAdapter(this);
+		BrowseAdapter adapter = new BrowseAdapter(this,"all");
 		recyclerView.setAdapter(adapter);
 
 		if(adapter.getItemCount() == 0) {

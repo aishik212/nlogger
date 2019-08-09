@@ -30,6 +30,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
 	private Preference prefStatus;
 	private Preference prefBrowse;
+	private Preference prefBrowsewp;
 	private Preference prefText;
 	private Preference prefOngoing;
 
@@ -51,6 +52,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 		if(prefBrowse != null) {
 			prefBrowse.setOnPreferenceClickListener(preference -> {
 				startActivity(new Intent(getActivity(), BrowseActivity.class));
+				return true;
+			});
+		}
+		prefBrowsewp = pm.findPreference(Const.PREF_BROWSE_WP);
+		if(prefBrowsewp != null) {
+			prefBrowsewp.setOnPreferenceClickListener(preference -> {
+				startActivity(new Intent(getActivity(), wpnotif.class));
 				return true;
 			});
 		}
